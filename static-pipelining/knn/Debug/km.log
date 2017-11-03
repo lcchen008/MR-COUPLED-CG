@@ -1,0 +1,48 @@
+﻿Build started 11/30/2012 5:38:55 PM.
+     1>Project "D:\linchuan\auto-tuning\KNN\knn-pipeline\km.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\knn.lastbuildstate".
+       InitializeBuildStatus:
+         Touching "Debug\knn.unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\AMD APP\\include" /I"C:\Users\huox\Documents\AMD APP\\samples\opencl\SDKUtil\include" /I"C:\Users\huox\Documents\AMD APP\\include" /IC:\pthreads.2 /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /GF- /Gm- /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /fp:except- /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt lib\rog.c lib\rol.c lib\scheduler.cpp main.cpp
+         rog.c
+         rol.c
+         scheduler.cpp
+         main.cpp
+         Generating Code...
+       ManifestResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\knn.exe.embed.manifest.res" Debug\knn_manifest.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\AMD APP\\lib\x86" /LIBPATH:"C:\Users\huox\Documents\AMD APP\\lib\x86" /LIBPATH:"C:\Users\huox\Documents\AMD APP\\TempSDKUtil\lib\debug\x86" /LIBPATH:C:\pthreads.2 SDKUtil.lib OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pthreadVC2.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\knn.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.pdb" /ASSEMBLYDEBUG:DISABLE /SUBSYSTEM:CONSOLE /HEAP:"0","0" /STACK:"0","0" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.lib" /MACHINE:X86 Debug\knn.exe.embed.manifest.res
+         Debug\rog.obj
+         Debug\rol.obj
+         Debug\scheduler.obj
+         Debug\main.obj
+       Manifest:
+         Deleting file "Debug\knn.exe.embed.manifest".
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\knn.exe.embed.manifest" /manifest Debug\knn.exe.intermediate.manifest
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\knn.exe.embed.manifest.res" Debug\knn_manifest.rc 
+       LinkEmbedManifest:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\AMD APP\\lib\x86" /LIBPATH:"C:\Users\huox\Documents\AMD APP\\lib\x86" /LIBPATH:"C:\Users\huox\Documents\AMD APP\\TempSDKUtil\lib\debug\x86" /LIBPATH:C:\pthreads.2 SDKUtil.lib OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pthreadVC2.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\knn.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.pdb" /ASSEMBLYDEBUG:DISABLE /SUBSYSTEM:CONSOLE /HEAP:"0","0" /STACK:"0","0" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.lib" /MACHINE:X86 Debug\knn.exe.embed.manifest.res
+         Debug\rog.obj
+         Debug\rol.obj
+         Debug\scheduler.obj
+         Debug\main.obj
+         km.vcxproj -> D:\linchuan\auto-tuning\KNN\knn-pipeline\Debug\knn.exe
+       PostBuildEvent:
+         copy lib\*.cl "."\
+         :VCEnd
+         lib\copy_to_array.cl
+         lib\get_size.cl
+         lib\kernel.cl
+         lib\start.cl
+                 4 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "Debug\knn.unsuccessfulbuild".
+         Touching "Debug\knn.lastbuildstate".
+     1>Done Building Project "D:\linchuan\auto-tuning\KNN\knn-pipeline\km.vcxproj" (rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.12

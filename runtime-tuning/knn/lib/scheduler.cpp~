@@ -1,0 +1,175 @@
+﻿#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#define __NO_STD_STRING
+#include <CL/cl.hpp>
+#include "scheduler.h"
+#include "util_host.h"
+#include <time.h>
+#include "ds.h"
+#include "error_handling.h"
+
+Scheduler::Scheduler(void *global_data, 
+		unsigned int global_data_size,
+		void *global_data_offset,
+		unsigned int global_data_offset_number,
+		unsigned int offset_unit_size)
+{
+	this->global_data = global_data;
+	this->global_data_size = global_data_size;
+	this->global_offset = global_data_offset;
+	this->offset_number = global_data_offset_number;
+	this->unit_size = offset_unit_size;
+
+	std::cout<<"in the scheduler..."<<std::endl;
+	cl_int err;
+	std::vector<cl::Platform> platforms;
+    	std::cout<<"HelloCL!\nGetting Platform Information\n";
+    	err = cl::Platform::get(&platforms);
+    	if(err != CL_SUCCESS)
+    	{
+        	printf("%s\n",print_cl_errstring(err));
+        	return;
+    	}
+
+	std::cout<<"Number of platforms found: "<<platforms.size()<<std::endl;
+
+	std::vector<cl::Platform>::iterator i;
+   	if(platforms.size() > 0)
+    	{
+        	for(i = platforms.begin(); i != platforms.end(); ++i)
+        	{
+            		std::cout<<(*i).getInfo<CL_PLATFORM_VENDOR>(&err).c_str()<<std::endl;
+			
+			if(!strcmp((*i).getInfo<CL_PLATFORM_VENDOR>(&err).c_str(), "Advanced Micro Devices, Inc."))
+            		{
+                		break;
+            		}
+        	}
+    	}
+
+    	if(err != CL_SUCCESS)
+    	{
+        	printf("%s\n",print_cl_errstring(err));
+        	return;
+	}	
+
+	platform = *i;
+
+	cl_context_properties cps[3] = { CL_CONTEXT_PLATFORM, (cl_context_properties)(platform)(), 0 };
+
+	std::cout<<"Creating a context AMD platform\n";
+    	context = cl::Context(CL_DEVICE_TYPE_CPU|CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
+    	if(err != CL_SUCCESS)
+    	{
+        	printf("%s\n",print_cl_errstring(err));
+        	return;
+	}
+
+	std::cout<<"Getting device info\n";
+    	devices = context.getInfo<CL_CONTEXT_DEVICES>();
+
+	std::cout<<"Num of devices: "<<devices.size()<<std::endl;
+
+	cl_device_type type;
+	devices[0].getInfo(CL_DEVICE_TYPE, &type);
+
+	if(type==CL_DEVICE_TYPE_CPU)
+	{
+	std::cout<<"first device is cpu"<<std::endl;
+	cpuqueue = cl::CommandQueue(context, devices[0], 0); 
+	gpuqueue = cl::CommandQueue(context, devices[1], 0);
+	}
+
+	else if(type==CL_DEVICE_TYPE_GPU)
+	{
+	std::cout<<"first device is gpu"<<std::endl;
+	gpuqueue = cl::CommandQueue(context, devices[0], 0); 
+	cpuqueue = cl::CommandQueue(context, devices[1], 0);
+	}
+
+	/*initialize the kvbuffers
+	 * each thread block has one
+	 * doublebuffer
+	 * */
+	for(int i = 0; i< GLOBAL_THREADS/LOCAL_THREADS; i++)
+	{
+		kvbuffersh[i].current = 0;
+		kvbuffersh[i].buffers[0].empty = false;
+		kvbuffersh[i].buffers[0].full = false;
+		kvbuffersh[i].buffers[1].empty = false;
+		kvbuffersh[i].buffers[1].full = false;
+	}
+
+	
+	global_data_d = cl::Buffer(context, CL_MEM_READ_ONLY|CL_MEM_ALLOC_HOST_PTR|CL_MEM_COPY_HOST_PTR, global_data_size, global_data, &err); 
+
+	global_offset_d = cl::Buffer(context, CL_MEM_READ_ONLY|CL_MEM_ALLOC_HOST_PTR|CL_MEM_COPY_HOST_PTR, offset_number*unit_size, global_offset, &err); 
+
+	kvbuffers = cl::Buffer(contex, CL_MEM_READ_ONLY|CL_MEM_ALLOC_HOST_PTR|CL_MEM_COPY_HOST_PTR);
+
+	if(err != CL_SUCCESS)
+    	{
+        	printf("%s\n",print_cl_errstring(err));
+        	return;
+	}
+
+	std::cout<<"Loading and compiling CL source: kernel.cl...\n";
+
+	Kernelfile file;
+	if(!file.open("kernel.cl"))
+	{
+		std::cerr<<"We couldn't load CL source code\n";
+        	return;
+	}
+
+	cl::Program::Sources sources_start(1, std::make_pair(file.source(), file.size()));
+
+	program = cl::Program(context, sources_start, &err);
+
+	if (err != CL_SUCCESS) 
+	{
+        	printf("%s\n",print_cl_errstring(err));
+    	}
+
+    	err = program.build(devices, "-I . -I lib");
+    	if (err != CL_SUCCESS) 
+	{
+
+         	cl::string str = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
+
+            	std::cout << " \n\t\t\tBUILD LOG\n";
+            	std::cout << " ************************************************\n";
+		std::cout << str.c_str() << std::endl;
+            	std::cout << " ************************************************\n";
+       
+        	std::cerr << "Program::build() failed (" << err << ")\n";
+		printf("%s\n",print_cl_errstring(err));
+        	return;
+    	}
+
+	
+}
+
+void Scheduler::do_mapreduce()
+{
+	cl_int err;
+	cl::Kernel kernel(program, "start", &err);
+    	if(err != CL_SUCCESS)
+    	{
+        	printf("%s\n",print_cl_errstring(err));
+        	return;
+	}
+	kernel.setArg(0, global_data_d);
+	kernel.setArg(1, global_offset_d);
+	kernel.setArg(2, offset_number);
+	kernel.setArg(3, unit_size);
+
+	cpuqueue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(GLOBAL_THREADS), cl::NDRange(LOCAL_THREADS, 0, NULL)); 
+	cpuqueue.flush();
+	gpuqueue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(GLOBAL_THREADS), cl::NDRange(LOCAL_THREADS, 0, NULL));
+	gpuqueue.flush();
+
+	cpuqueue.finish();
+	gpuqueue.finish();
+}

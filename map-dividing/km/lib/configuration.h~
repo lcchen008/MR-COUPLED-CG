@@ -1,0 +1,19 @@
+#ifndef CONFIGURATION
+#define CONFIGURATION
+
+#define NUM_BUCKETS_G 101
+#define NUM_BUCKETS_S 101
+#define MAX_POOL_S 960
+#define MAX_POOL_G 960
+#define ALIGN_SIZE 4
+#define KVINDEX_NUM 4096 
+#define KV_POOL_SIZE   
+
+#define CPU_LOCAL_THREADS 1
+#define CPU_GLOBAL_THREADS 4
+#define LOCAL_THREADS 256
+#define GLOBAL_THREADS 1280
+#define NUM_GROUPS 1
+#define WAVEFRONT_SIZE 64
+#define USE_LOCAL
+#endif

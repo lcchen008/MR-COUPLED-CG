@@ -1,0 +1,159 @@
+Generating points...
+Generating clusters...
+Data generation time: 97 ms
+HelloCL!
+Getting Platform Information
+Creating a context AMD platform
+Getting device info
+Loading and compiling CL source
+Source size is: 1068
+Source of kernel is: 
+#include "lib\rog.h"
+#include "lib\rol.h"
+#include "lib\rog_f.h"
+#include "lib\rol_f.h"
+#include "lib\configuration.h"
+#include "..\mapreduce.h"
+
+#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable
+#pragma OPENCL EXTENSION cl_khr_local_int32_base_atomics : enable
+#pragma OPENCL EXTENSION cl_khr_global_int32_extended_atomics : enable
+#pragma OPENCL EXTENSION cl_khr_local_int32_extended_atomics : enable
+
+
+__kernel void start(global Reduction_Object_G *object_g, global void *global_data, 
+global void *global_offset, unsigned int offset_number, unsigned int unit_size)
+{
+	//object_g->num_buckets = object_g->num_buckets + 9;
+	//atom_add(&(object_g->num_buckets), 1);
+	local unsigned int global_object_offset[LOCAL_THREADS/WAVEFRONT_SIZE];
+    //initialize the offsets for global memory
+	ginit(object_g, global_object_offset);
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    int i = get_global_id(0);
+    for(; i < offset_number; i++)
+    {
+        map_to_global(object_g, global_data, ((global char *)global_offset+unit_size*i), global_object_offset);
+    }
+}
+Source has been printed..
+ 
+			BUILD LOG
+ ************************************************
+..\lib\..\lib\rog_f.h(137): error: function "equal_private_and_global"
+          declared implicitly
+  					if(equal_private_and_global(key, key_size, key_data, size))
+  					   ^
+
+..\lib\..\lib\rog_f.h(141): error: function "reduce" declared implicitly
+  						reduce(value_ro_data, value_ro_size, value, value_size);
+  						^
+
+..\lib\..\mapreduce.h(44): error: too few arguments in function call
+  	return ginsert(object, &key, sizeof(key), value, sizeof(value));
+  	                                                              ^
+
+..\lib\..\mapreduce.h(58): error: identifier "total" is undefined
+  	temp[3] = total points;
+  	          ^
+
+..\lib\..\mapreduce.h(58): error: expected a ";"
+  	temp[3] = total points;
+  	                ^
+
+..\lib\..\mapreduce.h(53): warning: variable "total_points" was declared but
+          never referenced
+  	unsigned int total_points = num_points1 + num_points2;
+  	             ^
+
+..\lib\..\mapreduce.h(64): warning: declaration is incompatible with previous
+          "equal_private_and_global" (declared at line 137 of
+          "..\lib\..\lib\rog_f.h")
+  bool equal_private_and_global(void *key1, unsigned size1, global void *key2, unsigned size2)
+       ^
+
+..\lib\..\mapreduce.h(78): error: identifier "uensigned" is undefined
+  bool equal_local_and_global(local void *key1, uensigned size1, global void *key2, unsigned size2)
+                                                ^
+
+..\lib\rog_f.h(13): error: function "ginit" has already been defined
+  void ginit (global Reduction_Object_G *object, local unsigned int * global_object_offset)
+       ^
+
+..\lib\rog_f.h(23): error: function "gmalloc" has already been defined
+  int gmalloc(global Reduction_Object_G *object, unsigned int size, local unsigned int * global_object_offset)
+      ^
+
+..\lib\rog_f.h(32): error: function "gget_address" has already been defined
+  global void * gget_address(global Reduction_Object_G *object, int memory_index)
+                ^
+
+..\lib\rog_f.h(37): error: function "gget_key_address" has already been defined
+  global void * gget_key_address(global Reduction_Object_G *object, int bucket_index)
+                ^
+
+..\lib\rog_f.h(47): error: function "gget_key_size" has already been defined
+  unsigned short gget_key_size(global Reduction_Object_G *object, unsigned bucket_index)
+                 ^
+
+..\lib\rog_f.h(57): error: function "gget_value_address" has already been
+          defined
+  global void * gget_value_address(global Reduction_Object_G *object, unsigned bucket_index)
+                ^
+
+..\lib\rog_f.h(66): error: function "gget_value_size" has already been defined
+  unsigned short gget_value_size(global Reduction_Object_G *object, unsigned bucket_index)
+                 ^
+
+..\lib\rog_f.h(77): error: function "ginsert" has already been defined
+  bool ginsert(global Reduction_Object_G *object, void *key, 
+       ^
+
+..\lib\rog_f.h(141): error: function "reduce" declared implicitly
+  						reduce(value_ro_data, value_ro_size, value, value_size);
+  						^
+
+..\lib\rol_f.h(9): warning: missing return statement at end of non-void
+          function "lomalloc"
+  }
+  ^
+
+..\lib\rol_f.h(13): warning: missing return statement at end of non-void
+          function "linsert"
+  }
+  ^
+
+..\lib\rol_f.h(17): warning: missing return statement at end of non-void
+          function "lget_address"
+  }
+  ^
+
+..\lib\rol_f.h(21): warning: missing return statement at end of non-void
+          function "lget_key_address"
+  }
+  ^
+
+..\lib\rol_f.h(25): warning: missing return statement at end of non-void
+          function "lget_key_size"
+  }
+  ^
+
+..\lib\rol_f.h(29): warning: missing return statement at end of non-void
+          function "lget_value_address"
+  }
+  ^
+
+..\lib\rol_f.h(33): warning: missing return statement at end of non-void
+          function "lget_value_size"
+  }
+  ^
+
+C:\Users\LCCHEN~1\AppData\Local\Temp\OCLFE3A.tmp.cl(29): warning: null (zero)
+          character in input line ignored
+  } 
+   ^
+
+15 errors detected in the compilation of "C:\Users\LCCHEN~1\AppData\Local\Temp\OCLFE3A.tmp.cl".
+t key_size, void *value, unsigne
+ ************************************************

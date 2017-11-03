@@ -1,0 +1,18 @@
+#pragma OPENCL EXTENSION cl_amd_printf : enable
+__kernel void start(__global const void *global_data, __global const void *global_offset, unsigned int offset_number, unsigned int unit_size)
+{
+	const uint local_id =  get_local_id(0);	
+	const uint global_id = get_global_id(0);
+	
+
+	if(global_id==0)
+	{
+		printf("offset_unit_size is: %d\n", unit_size);
+		printf("number of offsets: %d\n", offset_number);
+		for(int i = 0; i<offset_number; i++)
+		{
+		
+			//((__global uint *)data)[i] = 0;
+		}
+	}
+}

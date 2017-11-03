@@ -1,0 +1,34 @@
+#ifndef MAPREDUCE
+#define MAPREDUCE
+#include "lib\util_device.h"
+#include "lib\rog.h"
+#include "lib\rol.h"
+#include "kmeans.h"
+
+#include "lib\rog_f.h"
+#include "lib\rol_f.h"
+//#pragma OPENCL EXTENSION cl_amd_printf : enable
+
+
+/*this map function maps inputs to the global reduction object*/
+bool map(__global void *global_data, 
+	__global void *offset)
+{
+	char *key = (char *)global_data + *(int *)offset;
+	char *p = key;
+
+	int key_size = 1;
+	while(*p!='\0')
+	{
+		key_size++;
+		p++;
+	};
+
+	int value = 1;
+
+	return emit(key, key_size, &value, sizeof(value));
+}
+
+
+
+#endif
